@@ -10,6 +10,7 @@ import Foundation
 
 struct CardModel {
     
+    var wasSeen = false
     var isFaceUp = false
     var isMatched = false
     var identifier : Int

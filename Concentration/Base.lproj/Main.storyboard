@@ -206,29 +206,54 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Flips: 0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lc2-ol-UYO">
-                                <rect key="frame" x="145" y="792" width="124" height="70"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="oye-4C-dm9">
+                                <rect key="frame" x="20" y="792" width="374" height="70"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Flips: 0" textAlignment="center" lineBreakMode="characterWrap" baselineAdjustment="alignBaselines" minimumFontSize="20" translatesAutoresizingMaskIntoConstraints="NO" id="Lc2-ol-UYO">
+                                        <rect key="frame" x="0.0" y="0.0" width="119.5" height="70"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <color key="textColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 0" textAlignment="center" lineBreakMode="characterWrap" baselineAdjustment="alignBaselines" minimumFontSize="20" translatesAutoresizingMaskIntoConstraints="NO" id="gfl-8t-Voy">
+                                        <rect key="frame" x="127.5" y="0.0" width="119" height="70"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="0mp-pT-7Do">
+                                        <rect key="frame" x="254.5" y="0.0" width="119.5" height="70"/>
+                                        <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="New Game">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="startNewGame:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yNc-2f-VhN"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="70" id="wr2-dH-N3M"/>
+                                    <constraint firstAttribute="height" constant="70" id="W5Q-rg-Ovp"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                <color key="textColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Lc2-ol-UYO" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="01u-U2-ebg"/>
-                            <constraint firstItem="Lc2-ol-UYO" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Vs7-Nl-EBP" secondAttribute="bottom" id="6XH-es-19Z"/>
                             <constraint firstItem="Vs7-Nl-EBP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="9bB-Ia-52F"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="oye-4C-dm9" secondAttribute="trailing" constant="20" id="Acz-MU-rYw"/>
                             <constraint firstItem="Vs7-Nl-EBP" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="FxJ-zm-XPQ"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Lc2-ol-UYO" secondAttribute="bottom" id="mYf-dy-PEa"/>
+                            <constraint firstItem="oye-4C-dm9" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Vs7-Nl-EBP" secondAttribute="bottom" constant="8" symbolic="YES" id="L0z-h1-rfE"/>
+                            <constraint firstItem="oye-4C-dm9" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="LDo-mr-ZJ5"/>
+                            <constraint firstItem="oye-4C-dm9" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="RxT-Me-Deh"/>
+                            <constraint firstItem="oye-4C-dm9" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="iB2-g9-NzU"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Vs7-Nl-EBP" secondAttribute="trailing" constant="20" id="y4r-Rb-mXh"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="flipsLabel" destination="Lc2-ol-UYO" id="tET-rC-aBQ"/>
+                        <outlet property="scoreLabel" destination="gfl-8t-Voy" id="Qzt-1y-Zx7"/>
                         <outletCollection property="cardButtons" destination="sEv-gP-Aaz" collectionClass="NSMutableArray" id="WVb-3Q-VY2"/>
                         <outletCollection property="cardButtons" destination="Q00-jR-NC5" collectionClass="NSMutableArray" id="hiA-9P-aLb"/>
                         <outletCollection property="cardButtons" destination="fgb-2O-tXr" collectionClass="NSMutableArray" id="Agz-XR-tl1"/>

@@ -44,8 +44,8 @@
 		84C2168624BA8B5D001C7658 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				84C2168724BA8B9F001C7658 /* ConcentrationGameModel.swift */,
 				84C2168924BA8BE3001C7658 /* CardModel.swift */,
+				84C2168724BA8B9F001C7658 /* ConcentrationGameModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
