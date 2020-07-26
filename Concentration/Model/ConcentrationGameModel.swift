@@ -99,11 +99,11 @@ class ConcentrationGameModel {
         }
         cards.shuffle()
     }
-    
+    var valueInArray = ""
     func setTheme(from dictionary: [String: [String]]) -> [String] {
         let keys = Array(dictionary.keys)
         let randomIndex = Int(arc4random_uniform(UInt32(keys.count)))
-        let valueInArray = keys[randomIndex]
+        valueInArray = keys[randomIndex]
         var array = [String]()
         if let dictionaryKey = dictionary[valueInArray] {
             array.append(contentsOf: dictionaryKey)
