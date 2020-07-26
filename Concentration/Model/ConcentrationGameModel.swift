@@ -20,8 +20,67 @@ class ConcentrationGameModel {
     var cardFlipsCount = 1
 
     var totalFlipsCount = 0
+
+    var firstCardFlippedOnDate: Date?
+    var secondCardFlippedOnDate: Date?
+    var timeBetweenFlips: DateComponents?
     
-    func keepScore(from index: Int) {
+    func chooseCard(at index: Int) {
+        totalFlipsCount += 1
+        if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
+            if cards[matchedIndex].identifier == cards[index].identifier {
+                cards[matchedIndex].isMatched = true
+                cards[index].isMatched = true
+            }
+            secondIndex = indexOfOneAndOnlyFaceUpCard
+            cards[index].isFaceUp = true
+            getTimeOfCardFlips(from: index)
+            indexOfOneAndOnlyFaceUpCard = nil
+            
+        } else {
+            for flipDownIndex in cards.indices {
+                cards[flipDownIndex].isFaceUp = false
+            }
+            cards[index].isFaceUp = true
+            indexOfOneAndOnlyFaceUpCard = index
+            getTimeOfCardFlips(from: index)
+        }
+        changeScoreDependingOnMatchesAndMismatches(from: index)
+        cards[index].wasSeen = true
+    }
+    
+    func getTimeOfCardFlips(from index: Int) {
+        // Get the user's current calendar and its components
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
+        
+        //Set date values for each corresponding card
+        if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
+            secondCardFlippedOnDate = calendar.date(from: components)
+        } else {
+            firstCardFlippedOnDate = calendar.date(from: components)
+        }
+        // If both flips have date values, check the difference in time between flips
+        changeScoreDependingOnTimeBetweenFlips(basedOn: calendar)
+    }
+    
+    func changeScoreDependingOnTimeBetweenFlips(basedOn calendar: Calendar) {
+        if firstCardFlippedOnDate != nil && secondCardFlippedOnDate != nil {
+            timeBetweenFlips = calendar.dateComponents([.hour,. minute, .second], from: firstCardFlippedOnDate!, to: secondCardFlippedOnDate!)
+            if let difference = timeBetweenFlips {
+                // second card is touched
+                if difference.second! > 5 {
+                    score -= 5
+                }
+                // first card is touched
+                else if difference.second! < -5 {
+                    score -= 5
+                }
+            }
+        }
+    }
+    
+    func changeScoreDependingOnMatchesAndMismatches(from index: Int) {
         cardFlipsCount = 1
         if let oneFaceUpCard = secondIndex, oneFaceUpCard != index {
             if cards[oneFaceUpCard].identifier == cards[index].identifier {
@@ -54,28 +113,6 @@ class ConcentrationGameModel {
         }
     }
     
-    func chooseCard(at index: Int) {
-        totalFlipsCount += 1
-        if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
-            if cards[matchedIndex].identifier == cards[index].identifier {
-                cards[matchedIndex].isMatched = true
-                cards[index].isMatched = true
-            }
-            secondIndex = indexOfOneAndOnlyFaceUpCard
-            cards[index].isFaceUp = true
-            indexOfOneAndOnlyFaceUpCard = nil
-            
-        } else {
-            for flipDownIndex in cards.indices {
-                cards[flipDownIndex].isFaceUp = false
-            }
-            cards[index].isFaceUp = true
-            indexOfOneAndOnlyFaceUpCard = index
-        }
-        keepScore(from: index)
-        cards[index].wasSeen = true
-    }
-    
     init(numberOfPairsOfCards: Int) {
         for _ in 0..<numberOfPairsOfCards {
             let card = CardModel()
@@ -99,6 +136,7 @@ class ConcentrationGameModel {
         }
         cards.shuffle()
     }
+    
     var valueInArray = ""
     func setTheme(from dictionary: [String: [String]]) -> [String] {
         let keys = Array(dictionary.keys)

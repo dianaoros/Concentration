@@ -111,7 +111,6 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setCardsTheme()
         emojiArray = game.setTheme(from: emojiThemes)
         updateViewFromModel()
     }
