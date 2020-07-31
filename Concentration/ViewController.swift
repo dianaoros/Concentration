@@ -10,11 +10,14 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    lazy var game = ConcentrationGameModel(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    private lazy var game = ConcentrationGameModel(numberOfPairsOfCards: numberOfPairsOfCards)
     
-    var emojiArray = [String]()
-    var emojiDictionary = [Int: String]()
-    var emojiThemes : [String: [String]] =
+    var numberOfPairsOfCards: Int {
+            return (cardButtons.count + 1) / 2
+    }
+    private var emojiArray = [String]()
+    private var emojiDictionary = [Int: String]()
+    private var emojiThemes : [String: [String]] =
         [
         "Holloween": ["🎃", "👻", "💀", "🍎", "🍭", "🍬", "🦇", "😈", "🙀", "🤡"],
         "Sports": ["⚽️", "🏀", "🏈", "🎾", "⚾️", "🛹", "⛸", "🥊", "🎿", "🏓"],
@@ -25,12 +28,12 @@ class ViewController: UIViewController {
         "Moon Phases": ["🌝", "🌛", "🌜", "🌚", "🌕", "🌖", "🌗", "🌘", "🌑", "🌒"]
         ]
     
-    @IBOutlet weak var flipsLabel: UILabel!
-    @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet private weak var flipsLabel: UILabel!
+    @IBOutlet private weak var scoreLabel: UILabel!
     
-    @IBOutlet var cardButtons: [UIButton]!
+    @IBOutlet private var cardButtons: [UIButton]!
     
-    @IBAction func touchCard(_ sender: UIButton) {
+    @IBAction private func touchCard(_ sender: UIButton) {
         
         if let cardNumber = cardButtons.firstIndex(of: sender) {
             game.chooseCard(at: cardNumber)
@@ -42,7 +45,7 @@ class ViewController: UIViewController {
         
     }
     
-    @IBAction func startNewGame(_ sender: Any) {
+    @IBAction private func startNewGame(_ sender: Any) {
         emojiArray = []
         emojiDictionary = [:]
         game.startNewGame()
@@ -50,7 +53,7 @@ class ViewController: UIViewController {
         updateViewFromModel()
     }
     
-    func updateViewFromModel() {
+    private func updateViewFromModel() {
         for index in cardButtons.indices {
             let button = cardButtons[index]
             button.isEnabled = true
@@ -72,15 +75,14 @@ class ViewController: UIViewController {
         flipsLabel.text = "Flips: \(game.totalFlipsCount)"
     }
     
-    func getEmoji(for card: CardModel) -> String {
+    private func getEmoji(for card: CardModel) -> String {
         if emojiDictionary[card.identifier] == nil, emojiArray.count > 0 {
-            let randomIndex = Int(arc4random_uniform(UInt32(emojiArray.count)))
-            emojiDictionary[card.identifier] = emojiArray.remove(at: randomIndex)
+            emojiDictionary[card.identifier] = emojiArray.remove(at: emojiArray.count.arc4random)
         }
         return emojiDictionary[card.identifier] ?? "?"
     }
     
-    func changeUIColorsBasedOnTheme(with button: UIButton, for card: CardModel) {
+    private func changeUIColorsBasedOnTheme(with button: UIButton, for card: CardModel) {
         switch game.valueInArray {
         case "Holloween":
             view.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
@@ -117,4 +119,5 @@ class ViewController: UIViewController {
 
 
 }
+
 

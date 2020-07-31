@@ -8,24 +8,46 @@
 
 import Foundation
 
-class ConcentrationGameModel {
+struct ConcentrationGameModel {
     
-    var cards = [CardModel]()
-    var indexOfOneAndOnlyFaceUpCard: Int?
+    private(set) var cards = [CardModel]()
+    private var indexOfOneAndOnlyFaceUpCard: Int? {
+        get {
+            var foundIndex: Int?
+            for index in cards.indices {
+                if cards[index].isFaceUp {
+                    if foundIndex == nil {
+                        foundIndex = index
+                    } else {
+                        return nil
+                    }
+                }
+            }
+            return foundIndex
+        }
+        set {
+            for index in cards.indices {
+                //Turn all cards face down except for indexOfOneAndOnlyFaceUpCard
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
     
-    var secondIndex: Int?
-    var firstTimeSeenCardsArray = [Int]()
-    var secondTimeSeenCardsArray = [Int]()
-    var score = 0
-    var cardFlipsCount = 1
+    private var secondIndex: Int?
+    private var firstTimeSeenCardsArray = [Int]()
+    private var secondTimeSeenCardsArray = [Int]()
+    private(set) var score = 0
+    private var cardFlipsCount = 1
 
-    var totalFlipsCount = 0
+    private(set) var totalFlipsCount = 0
 
-    var firstCardFlippedOnDate: Date?
-    var secondCardFlippedOnDate: Date?
-    var timeBetweenFlips: DateComponents?
+    private var firstCardFlippedOnDate: Date?
+    private var secondCardFlippedOnDate: Date?
+    private var timeBetweenFlips: DateComponents?
     
-    func chooseCard(at index: Int) {
+    mutating func chooseCard(at index: Int) {
+        assert(cards.indices.contains(index), "Concentration.chooseCard(at: \(index)): chosen index not in the cards.")
+        
         totalFlipsCount += 1
         if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
             if cards[matchedIndex].identifier == cards[index].identifier {
@@ -35,13 +57,8 @@ class ConcentrationGameModel {
             secondIndex = indexOfOneAndOnlyFaceUpCard
             cards[index].isFaceUp = true
             getTimeOfCardFlips(from: index)
-            indexOfOneAndOnlyFaceUpCard = nil
             
         } else {
-            for flipDownIndex in cards.indices {
-                cards[flipDownIndex].isFaceUp = false
-            }
-            cards[index].isFaceUp = true
             indexOfOneAndOnlyFaceUpCard = index
             getTimeOfCardFlips(from: index)
         }
@@ -49,7 +66,7 @@ class ConcentrationGameModel {
         cards[index].wasSeen = true
     }
     
-    func getTimeOfCardFlips(from index: Int) {
+    mutating private func getTimeOfCardFlips(from index: Int) {
         // Get the user's current calendar and its components
         let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
@@ -64,7 +81,7 @@ class ConcentrationGameModel {
         changeScoreDependingOnTimeBetweenFlips(basedOn: calendar)
     }
     
-    func changeScoreDependingOnTimeBetweenFlips(basedOn calendar: Calendar) {
+    mutating private func changeScoreDependingOnTimeBetweenFlips(basedOn calendar: Calendar) {
         if firstCardFlippedOnDate != nil && secondCardFlippedOnDate != nil {
             timeBetweenFlips = calendar.dateComponents([.hour,. minute, .second], from: firstCardFlippedOnDate!, to: secondCardFlippedOnDate!)
             if let difference = timeBetweenFlips {
@@ -80,17 +97,17 @@ class ConcentrationGameModel {
         }
     }
     
-    func changeScoreDependingOnMatchesAndMismatches(from index: Int) {
+    mutating private func changeScoreDependingOnMatchesAndMismatches(from index: Int) {
         cardFlipsCount = 1
-        if let oneFaceUpCard = secondIndex, oneFaceUpCard != index {
-            if cards[oneFaceUpCard].identifier == cards[index].identifier {
-                print(cards[oneFaceUpCard].identifier, cards[index].identifier)
+        if let matchedIndex = secondIndex, matchedIndex != index {
+            if cards[matchedIndex].identifier == cards[index].identifier {
+                print(cards[matchedIndex].identifier, cards[index].identifier)
                 score += 2
             }
-            if secondTimeSeenCardsArray.contains(cards[oneFaceUpCard].identifier) && cards[index].identifier != cards[oneFaceUpCard].identifier || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsArray.contains(cards[matchedIndex].identifier) && cards[index].identifier != cards[matchedIndex].identifier || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
-            if secondTimeSeenCardsArray.contains(cards[oneFaceUpCard].identifier) && secondTimeSeenCardsArray.contains(cards[index].identifier) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsArray.contains(cards[matchedIndex].identifier) && secondTimeSeenCardsArray.contains(cards[index].identifier) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
             secondIndex = nil
@@ -102,7 +119,7 @@ class ConcentrationGameModel {
         }
     }
     
-    func addSeenCardsToArrays(from index: Int) {
+    mutating private func addSeenCardsToArrays(from index: Int) {
         if firstTimeSeenCardsArray.contains(cards[index].identifier) {
             cardFlipsCount = 2
             if !secondTimeSeenCardsArray.contains(cards[index].identifier) && !cards[index].wasSeen {
@@ -114,6 +131,8 @@ class ConcentrationGameModel {
     }
     
     init(numberOfPairsOfCards: Int) {
+        assert(numberOfPairsOfCards > 0, "Concentration.init(\(numberOfPairsOfCards)): you must have at least one pair of cards.")
+
         for _ in 0..<numberOfPairsOfCards {
             let card = CardModel()
             cards += [card, card]
@@ -121,7 +140,7 @@ class ConcentrationGameModel {
         }
     }
 
-    func startNewGame() {
+    mutating func startNewGame() {
         secondIndex = nil
         cardFlipsCount = 1
         score = 0
@@ -138,10 +157,9 @@ class ConcentrationGameModel {
     }
     
     var valueInArray = ""
-    func setTheme(from dictionary: [String: [String]]) -> [String] {
+    mutating func setTheme(from dictionary: [String: [String]]) -> [String] {
         let keys = Array(dictionary.keys)
-        let randomIndex = Int(arc4random_uniform(UInt32(keys.count)))
-        valueInArray = keys[randomIndex]
+        valueInArray = keys[keys.count.arc4random]
         var array = [String]()
         if let dictionaryKey = dictionary[valueInArray] {
             array.append(contentsOf: dictionaryKey)
@@ -150,5 +168,16 @@ class ConcentrationGameModel {
     }
     
     
-    
+}
+
+extension Int {
+    var arc4random: Int {
+        if self > 0 {
+            return Int(arc4random_uniform(UInt32(self)))
+        } else if self < 0 {
+            return -Int(arc4random_uniform(UInt32(self)))
+        } else {
+            return 0
+        }
+    }
 }
