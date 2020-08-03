@@ -16,7 +16,7 @@ class ViewController: UIViewController {
             return (cardButtons.count + 1) / 2
     }
     private var emojiArray = [String]()
-    private var emojiDictionary = [Int: String]()
+    private var emojiDictionary = [Card: String]()
     private var emojiThemes : [String: [String]] =
         [
         "Holloween": ["🎃", "👻", "💀", "🍎", "🍭", "🍬", "🦇", "😈", "🙀", "🤡"],
@@ -53,6 +53,15 @@ class ViewController: UIViewController {
         updateViewFromModel()
     }
     
+    func updateFlipCountLabel() {
+        let attributes: [NSAttributedString.Key: Any] = [
+            .strokeColor: UIColor.yellow,
+            .strokeWidth: -5.0
+        ]
+        let attributedText = NSAttributedString(string: "Flips: \(game.totalFlipsCount)", attributes: attributes)
+        flipsLabel.attributedText = attributedText
+    }
+    
     private func updateViewFromModel() {
         for index in cardButtons.indices {
             let button = cardButtons[index]
@@ -72,17 +81,17 @@ class ViewController: UIViewController {
             }
         }
         scoreLabel.text = "Score: \(game.score)"
-        flipsLabel.text = "Flips: \(game.totalFlipsCount)"
+        updateFlipCountLabel()
     }
     
-    private func getEmoji(for card: CardModel) -> String {
-        if emojiDictionary[card.identifier] == nil, emojiArray.count > 0 {
-            emojiDictionary[card.identifier] = emojiArray.remove(at: emojiArray.count.arc4random)
+    private func getEmoji(for card: Card) -> String {
+        if emojiDictionary[card] == nil, emojiArray.count > 0 {
+            emojiDictionary[card] = emojiArray.remove(at: emojiArray.count.arc4random)
         }
-        return emojiDictionary[card.identifier] ?? "?"
+        return emojiDictionary[card] ?? "?"
     }
     
-    private func changeUIColorsBasedOnTheme(with button: UIButton, for card: CardModel) {
+    private func changeUIColorsBasedOnTheme(with button: UIButton, for card: Card) {
         switch game.valueInArray {
         case "Holloween":
             view.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)

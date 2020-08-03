@@ -10,20 +10,10 @@ import Foundation
 
 struct ConcentrationGameModel {
     
-    private(set) var cards = [CardModel]()
+    private(set) var cards = [Card]()
     private var indexOfOneAndOnlyFaceUpCard: Int? {
         get {
-            var foundIndex: Int?
-            for index in cards.indices {
-                if cards[index].isFaceUp {
-                    if foundIndex == nil {
-                        foundIndex = index
-                    } else {
-                        return nil
-                    }
-                }
-            }
-            return foundIndex
+            return cards.indices.filter {cards[$0].isFaceUp}.oneAndOnly
         }
         set {
             for index in cards.indices {
@@ -34,8 +24,8 @@ struct ConcentrationGameModel {
     }
     
     private var secondIndex: Int?
-    private var firstTimeSeenCardsArray = [Int]()
-    private var secondTimeSeenCardsArray = [Int]()
+    private var firstTimeSeenCardsArray = [Card]()
+    private var secondTimeSeenCardsArray = [Card]()
     private(set) var score = 0
     private var cardFlipsCount = 1
 
@@ -50,7 +40,7 @@ struct ConcentrationGameModel {
         
         totalFlipsCount += 1
         if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
-            if cards[matchedIndex].identifier == cards[index].identifier {
+            if cards[matchedIndex] == cards[index] {
                 cards[matchedIndex].isMatched = true
                 cards[index].isMatched = true
             }
@@ -100,14 +90,14 @@ struct ConcentrationGameModel {
     mutating private func changeScoreDependingOnMatchesAndMismatches(from index: Int) {
         cardFlipsCount = 1
         if let matchedIndex = secondIndex, matchedIndex != index {
-            if cards[matchedIndex].identifier == cards[index].identifier {
-                print(cards[matchedIndex].identifier, cards[index].identifier)
+            if cards[matchedIndex] == cards[index] {
+                print(cards[matchedIndex], cards[index])
                 score += 2
             }
-            if secondTimeSeenCardsArray.contains(cards[matchedIndex].identifier) && cards[index].identifier != cards[matchedIndex].identifier || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsArray.contains(cards[matchedIndex]) && cards[index] != cards[matchedIndex] || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
-            if secondTimeSeenCardsArray.contains(cards[matchedIndex].identifier) && secondTimeSeenCardsArray.contains(cards[index].identifier) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsArray.contains(cards[matchedIndex]) && secondTimeSeenCardsArray.contains(cards[index]) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
             secondIndex = nil
@@ -120,21 +110,23 @@ struct ConcentrationGameModel {
     }
     
     mutating private func addSeenCardsToArrays(from index: Int) {
-        if firstTimeSeenCardsArray.contains(cards[index].identifier) {
+        if firstTimeSeenCardsArray.contains(cards[index]) {
             cardFlipsCount = 2
-            if !secondTimeSeenCardsArray.contains(cards[index].identifier) && !cards[index].wasSeen {
-                secondTimeSeenCardsArray.append(cards[index].identifier)
+            if !secondTimeSeenCardsArray.contains(cards[index]) && !cards[index].wasSeen {
+                secondTimeSeenCardsArray.append(cards[index])
             }
         } else if cardFlipsCount == 1 {
-            firstTimeSeenCardsArray.append(cards[index].identifier)
+            firstTimeSeenCardsArray.append(cards[index])
         }
+        print(firstTimeSeenCardsArray)
+        print(secondTimeSeenCardsArray)
     }
     
     init(numberOfPairsOfCards: Int) {
         assert(numberOfPairsOfCards > 0, "Concentration.init(\(numberOfPairsOfCards)): you must have at least one pair of cards.")
 
         for _ in 0..<numberOfPairsOfCards {
-            let card = CardModel()
+            let card = Card()
             cards += [card, card]
             cards.shuffle()
         }
@@ -180,4 +172,11 @@ extension Int {
             return 0
         }
     }
+}
+
+extension Collection {
+    var oneAndOnly: Element? {
+        return count == 1 ? first : nil
+    }
+    
 }

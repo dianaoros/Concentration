@@ -8,12 +8,19 @@
 
 import Foundation
 
-struct CardModel {
+struct Card: Hashable {
     
     var wasSeen = false
     var isFaceUp = false
     var isMatched = false
-    var identifier : Int
+    private var identifier: Int
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+    static func == (lhs: Card, rhs: Card) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
     
     private static var identifierFactory = 0
     
@@ -23,7 +30,7 @@ struct CardModel {
     }
     
     init() {
-        identifier = CardModel.getUniqueIdentifier()
+        identifier = Card.getUniqueIdentifier()
     }
 
 }
