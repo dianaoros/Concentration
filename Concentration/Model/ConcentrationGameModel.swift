@@ -24,8 +24,8 @@ struct ConcentrationGameModel {
     }
     
     private var secondIndex: Int?
-    private var firstTimeSeenCardsArray = [Card]()
-    private var secondTimeSeenCardsArray = [Card]()
+    private var firstTimeSeenCardsSet = Set<Card>()
+    private var secondTimeSeenCardsSet = Set<Card>()
     private(set) var score = 0
     private var cardFlipsCount = 1
 
@@ -62,7 +62,7 @@ struct ConcentrationGameModel {
         let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
         
         //Set date values for each corresponding card
-        if let matchedIndex = indexOfOneAndOnlyFaceUpCard, matchedIndex != index {
+        if indexOfOneAndOnlyFaceUpCard == nil {
             secondCardFlippedOnDate = calendar.date(from: components)
         } else {
             firstCardFlippedOnDate = calendar.date(from: components)
@@ -94,32 +94,32 @@ struct ConcentrationGameModel {
                 print(cards[matchedIndex], cards[index])
                 score += 2
             }
-            if secondTimeSeenCardsArray.contains(cards[matchedIndex]) && cards[index] != cards[matchedIndex] || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsSet.contains(cards[matchedIndex]) && cards[index] != cards[matchedIndex] || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
-            if secondTimeSeenCardsArray.contains(cards[matchedIndex]) && secondTimeSeenCardsArray.contains(cards[index]) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
+            if secondTimeSeenCardsSet.contains(cards[matchedIndex]) && secondTimeSeenCardsSet.contains(cards[index]) && !cards[index].isMatched || cards[index].wasSeen && !cards[index].isMatched {
                 score -= 1
             }
             secondIndex = nil
         }
         if cardFlipsCount == 1 {
-            addSeenCardsToArrays(from: index)
+            addSeenCardsToSet(from: index)
         } else if cardFlipsCount == 2 && cards[index].wasSeen {
             score -= 1
         }
     }
     
-    mutating private func addSeenCardsToArrays(from index: Int) {
-        if firstTimeSeenCardsArray.contains(cards[index]) {
+    mutating private func addSeenCardsToSet(from index: Int) {
+        if firstTimeSeenCardsSet.contains(cards[index]) {
             cardFlipsCount = 2
-            if !secondTimeSeenCardsArray.contains(cards[index]) && !cards[index].wasSeen {
-                secondTimeSeenCardsArray.append(cards[index])
+            if !secondTimeSeenCardsSet.contains(cards[index]) && !cards[index].wasSeen {
+                secondTimeSeenCardsSet.insert(cards[index])
             }
         } else if cardFlipsCount == 1 {
-            firstTimeSeenCardsArray.append(cards[index])
+            firstTimeSeenCardsSet.insert(cards[index])
         }
-        print(firstTimeSeenCardsArray)
-        print(secondTimeSeenCardsArray)
+        print(firstTimeSeenCardsSet)
+        print(secondTimeSeenCardsSet)
     }
     
     init(numberOfPairsOfCards: Int) {
@@ -136,8 +136,8 @@ struct ConcentrationGameModel {
         secondIndex = nil
         cardFlipsCount = 1
         score = 0
-        firstTimeSeenCardsArray = []
-        secondTimeSeenCardsArray = []
+        firstTimeSeenCardsSet = []
+        secondTimeSeenCardsSet = []
         totalFlipsCount = 0
         
         for resetCardIndex in cards.indices {
